@@ -1,0 +1,53 @@
+This code is implemented as part of the paper "Multicore Triangle
+Computations Without Tuning" by Julian Shun and Kanat Tangwongsan in
+Proceedings of the IEEE International Conference on Data Engineering
+(ICDE), 2015.
+
+The code uses many files developed as part of the Problem Based
+Benchmark Suite (PBBS) (http://www.cs.cmu.edu/~pbbs).
+
+Compilation: To compile the parallel code, define the environment
+variable GCILK to use the g++ compiler with Cilk Plus enabled (see
+installation instructions at www.cilkplus.org/build-gcc-cilkplus). If
+GCILK is not defined, then g++ will compile the code without
+parallelism. The code has been tested with g++ version 4.8.0. The
+default integer size is 32 bytes. If the number of vertices is greater
+than 2^32, then 64 byte integers are required to represent
+offsets---in this case, define the environment variable LONG before
+compiling.  Then go into one of the implementation directories and
+type "make". The executable named "TC" will be generated.
+
+The implementations included are as follows: orderedMerge is the exact
+global triangle counting algorithm (TC-Merge in the paper),
+orderedHash is the exact global triangle counting algorithm (TC-Hash
+in the paper), localOrderedMerge is the exact local triangle counting
+algorithm (TC-Local in the paper), and colorfulOrderedMerge is the
+approximate triangle counting algorithm (TC-Approx in the paper).
+
+The triangle counting implementations (TC) takes as input a graph file
+in the PBBS adjacency list format
+(http://www.cs.cmu.edu/~pbbs/benchmarks/graphIO.html), and the graph
+should be symmetric.  An optional argument "-r" followed by an integer
+may be provided to specify the number of timed rounds to run the
+algorithm for (the default is 1). For example, "./TC -r 3 graphName"
+runs the implementation on the graph titled graphName for 3 rounds.
+
+For the approximate counting algorithm, an optional argument "-d"
+followed by an integer may be provided to specify the inverse of the
+sampling probability (the default is 25, giving a sampling probability
+of 1/25). The number of rounds can be increased to lower the
+error/variance.
+
+An optional argument of "-b" can be passed to use an input in binary
+format.  This requires three files NAME.config, NAME.adj, and
+NAME.idx. The .config file stores the number of vertices in the graph
+in text format. The .idx file stores in binary the offsets for the
+vertices in the Compressed Sparse Row (CSR) format. The .adj file
+stores in binary the edge targets in the CSR format.
+
+Typing "numactl -i all" before the program name may give better
+performance. Making sure that most of the RAM is free may also give
+better performance.
+
+Please direct any questions or comments to Julian Shun at
+jshun@cs.cmu.edu.
